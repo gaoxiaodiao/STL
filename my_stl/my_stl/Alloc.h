@@ -133,6 +133,11 @@ private:
 	static char* endFree;				//内存池结束
 	static size_t heapSize;				//向系统申请总内存大小
 };
+char* _DefaultAllocTemplate::startFree = 0;
+char* _DefaultAllocTemplate::endFree = 0;
+_DefaultAllocTemplate::obj* _DefaultAllocTemplate::freeList[_FFREELISTS]={0};
+size_t _DefaultAllocTemplate::heapSize = 0;
+
 typedef _DefaultAllocTemplate alloc;
 
 //从内存池中获取内存
@@ -207,7 +212,7 @@ void * _DefaultAllocTemplate::Refill(size_t n){
 	void *ret = chunk;
 	//剩下的小块内存挂入自由链表
 	freeList[index] = nextObj = (obj*)(chunk + n);
-	for(i=1; i==nobjs-1; ++i){
+	for(i=1; i!=nobjs-1; ++i){
 		curObj = nextObj;
 		nextObj = (obj*)((char*)(nextObj+n));
 		curObj->freeListLink = nextObj;
