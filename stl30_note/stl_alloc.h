@@ -131,40 +131,41 @@ __STL_BEGIN_NAMESPACE
 # endif
 #endif
 
+
+//////////////////////////////////一级空间配置器部分//////////////////////////////
 template <int inst>
 class __malloc_alloc_template {
 
 private:
 
-static void *oom_malloc(size_t);
-
-static void *oom_realloc(void *, size_t);
+static void *oom_malloc(size_t);			//在malloc失败时调用该函数,采用了set_new_handler机制
+static void *oom_realloc(void *, size_t);	//同上
 
 #ifndef __STL_STATIC_TEMPLATE_MEMBER_BUG
     static void (* __malloc_alloc_oom_handler)();
 #endif
 
 public:
-
+//实际上仅仅对malloc进行了简单的封装,失败调用oom_malloc
 static void * allocate(size_t n)
 {
     void *result = malloc(n);
     if (0 == result) result = oom_malloc(n);
     return result;
 }
-
+//对free进行封装
 static void deallocate(void *p, size_t /* n */)
 {
     free(p);
 }
-
+//对realloc的封装
 static void * reallocate(void *p, size_t /* old_sz */, size_t new_sz)
 {
     void * result = realloc(p, new_sz);
     if (0 == result) result = oom_realloc(p, new_sz);
     return result;
 }
-
+//设置句柄函数,并返回之前旧的句柄函数
 static void (* set_malloc_handler(void (*f)()))()
 {
     void (* old)() = __malloc_alloc_oom_handler;
@@ -181,6 +182,7 @@ template <int inst>
 void (* __malloc_alloc_template<inst>::__malloc_alloc_oom_handler)() = 0;
 #endif
 
+//不同与allocate的就是,当出现内存不足时,会调用用户自定义的句柄函数
 template <int inst>
 void * __malloc_alloc_template<inst>::oom_malloc(size_t n)
 {
@@ -194,8 +196,8 @@ void * __malloc_alloc_template<inst>::oom_malloc(size_t n)
         result = malloc(n);
         if (result) return(result);
     }
-}
-
+}			
+//同上
 template <int inst>
 void * __malloc_alloc_template<inst>::oom_realloc(void *p, size_t n)
 {
@@ -213,6 +215,7 @@ void * __malloc_alloc_template<inst>::oom_realloc(void *p, size_t n)
 
 typedef __malloc_alloc_template<0> malloc_alloc;
 
+//符合STL规格的接口
 template<class T, class Alloc>
 class simple_alloc {
 
@@ -410,7 +413,7 @@ public:
     }
     *my_free_list = result -> free_list_link;
     return (result);
-  };
+   };
 
   /* p may not be 0 */
   static void deallocate(void *p, size_t n)
@@ -518,7 +521,7 @@ void* __default_alloc_template<threads, inst>::refill(size_t n)
     obj * result;
     obj * current_obj, * next_obj;
     int i;
-
+	
     if (1 == nobjs) return(chunk);
     my_free_list = free_list + FREELIST_INDEX(n);
 
@@ -537,6 +540,11 @@ void* __default_alloc_template<threads, inst>::refill(size_t n)
       }
     return(result);
 }
+
+
+
+
+
 
 template <bool threads, int inst>
 void*
