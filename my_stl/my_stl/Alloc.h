@@ -215,3 +215,20 @@ void * _DefaultAllocTemplate::Refill(size_t n){
 	curObj->freeListLink = 0;
 	return ret;
 }
+//一套符合STL规格接口的类
+template<typename T,typename Alloc>
+class SimpleAlloc{
+public:
+	static T* Allocate(size_t n){
+		return n==0?0:(T*)Alloc::Allocate(n);
+	}
+	static T* Allocate(void){
+		return (T*)Alloc::Allocate(sizeof(T));
+	}
+	static void Deallocate(void *p){
+		Alloc::Deallocate(p,sizeof(T));
+	}
+	static void Deallocate(void *p,size_t n){
+		if(n!=0)Alloc::Deallocate(p,n*sizeof(T));
+	}
+};
