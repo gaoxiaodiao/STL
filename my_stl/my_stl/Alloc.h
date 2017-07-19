@@ -5,7 +5,6 @@
 *集成开发环境:Microsoft Visual Studio 2010 
 */
 #include<cstdlib>
-
 ///////////////一级空间配置器的简单实现///////////////////
 class _MallocAllocTemplate{
 	typedef void(*pFun)();
@@ -214,7 +213,7 @@ void * _DefaultAllocTemplate::Refill(size_t n){
 	freeList[index] = nextObj = (obj*)(chunk + n);
 	for(i=1; i!=nobjs-1; ++i){
 		curObj = nextObj;
-		nextObj = (obj*)((char*)(nextObj+n));
+		nextObj = (obj*)((char*)nextObj + n);
 		curObj->freeListLink = nextObj;
 	}
 	curObj->freeListLink = 0;
