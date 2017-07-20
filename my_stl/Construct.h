@@ -4,6 +4,9 @@
 *日期:2017-07-20
 *集成开发环境:Microsoft Visual Studio 2010 
 */
+#ifndef __CONSTRUCT_H__
+#define __CONSTRUCT_H__
+#include"TypeTraits.h"
 #include<new>
 
 //调用new定位表达式来初始化对象
@@ -21,7 +24,7 @@ inline void Destroy(T *p){
 //析构一段区间
 template <class ForwardIterator>
 inline void Destroy(ForwardIterator first, ForwardIterator last) {
-	_Destroy(first, last, value_type(first));
+	_Destroy(first, last, ValueType(first));
 }
 
 //通过迭代器的类型萃取,来判断对象是否为POD类型,选择调用哪种析构函数
@@ -40,9 +43,10 @@ inline void _DestroyAux(ForwardIterator first, ForwardIterator last, _FalseType)
 
 //内置类型或浅拷贝对象类型,其析构不需要做事情(POD类型)
 template <class ForwardIterator> 
-inline void _DestroyAux(ForwardIterator, ForwardIterator, __TrueType){}
+inline void _DestroyAux(ForwardIterator, ForwardIterator, _TrueType){}
 
 //两个析构的特化版本
 inline void destroy(char*, char*) {}
 inline void destroy(wchar_t*, wchar_t*) {}
 
+#endif
