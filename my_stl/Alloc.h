@@ -4,6 +4,8 @@
 *日期:2017-07-19
 *集成开发环境:Microsoft Visual Studio 2010 
 */
+#ifndef __ALLOC_H__
+#define __ALLOC_H__
 #include<cstdlib>
 ///////////////一级空间配置器的简单实现///////////////////
 class _MallocAllocTemplate{
@@ -236,3 +238,4 @@ public:
 		if(n!=0)Alloc::Deallocate(p,n*sizeof(T));
 	}
 };
+#endif
