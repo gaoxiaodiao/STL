@@ -321,7 +321,8 @@ vector<T, Alloc>& vector<T, Alloc>::operator=(const vector<T, Alloc>& x) {
 
 template <class T, class Alloc>
 void vector<T, Alloc>::insert_aux(iterator position, const T& x) {
-  if (finish != end_of_storage) {
+	if (finish != end_of_storage) {
+	
     construct(finish, *(finish - 1));
     ++finish;
     T x_copy = x;

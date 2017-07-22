@@ -12,17 +12,20 @@ struct _FalseType {};
 template<typename T>
 struct _TypeTraits{
 	//暂时精简为一个成员
-	typedef _FalseType    Is_POD_Type;
+	typedef _FalseType Is_POD_Type;
+	typedef _FalseType HasTrivialDestructor;
 };
 
 template<>
 struct _TypeTraits<int>{
-	typedef _TrueType    Is_POD_Type;
+	typedef _TrueType Is_POD_Type;
+	typedef _TrueType HasTrivialDestructor;
 };
 
 template<>
 struct _TypeTraits<unsigned int>{
 	typedef _TrueType    Is_POD_Type;
+	typedef _TrueType HasTrivialDestructor;
 };
 
 template<>
@@ -33,6 +36,7 @@ struct _TypeTraits<char>{
 template<>
 struct _TypeTraits<unsigned char>{
 	typedef _TrueType    Is_POD_Type;
+	typedef _TrueType HasTrivialDestructor;
 };
 //......
 

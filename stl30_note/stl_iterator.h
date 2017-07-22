@@ -80,6 +80,11 @@ template <class T, class Distance> struct random_access_iterator {
   typedef T&                         reference;
 };
 
+
+
+
+
+
 #ifdef __STL_USE_NAMESPACES
 template <class Category, class T, class Distance = ptrdiff_t,
           class Pointer = T*, class Reference = T&>
@@ -120,20 +125,20 @@ struct iterator_traits<const T*> {
   typedef const T*                   pointer;
   typedef const T&                   reference;
 };
-
+//›Õ»°iterator_category
 template <class Iterator>
 inline typename iterator_traits<Iterator>::iterator_category
 iterator_category(const Iterator&) {
   typedef typename iterator_traits<Iterator>::iterator_category category;
   return category();
 }
-
+//›Õ»°difference_type
 template <class Iterator>
 inline typename iterator_traits<Iterator>::difference_type*
 distance_type(const Iterator&) {
   return static_cast<typename iterator_traits<Iterator>::difference_type*>(0);
 }
-
+//›Õ»°value_type
 template <class Iterator>
 inline typename iterator_traits<Iterator>::value_type*
 value_type(const Iterator&) {
@@ -225,6 +230,20 @@ inline ptrdiff_t* distance_type(const T*) { return (ptrdiff_t*)(0); }
 
 #endif /* __STL_CLASS_PARTIAL_SPECIALIZATION */
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 template <class InputIterator, class Distance>
 inline void __distance(InputIterator first, InputIterator last, Distance& n, 
                        input_iterator_tag) {
@@ -302,6 +321,9 @@ template <class InputIterator, class Distance>
 inline void advance(InputIterator& i, Distance n) {
   __advance(i, n, iterator_category(i));
 }
+
+
+
 
 template <class Container>
 class back_insert_iterator {

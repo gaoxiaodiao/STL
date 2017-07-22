@@ -72,18 +72,19 @@ inline ForwardIterator
                      ForwardIterator result) {
   return __uninitialized_copy(first, last, result, value_type(result));
 }
-
 inline char* uninitialized_copy(const char* first, const char* last,
                                 char* result) {
   memmove(result, first, last - first);
   return result + (last - first);
 }
-
 inline wchar_t* uninitialized_copy(const wchar_t* first, const wchar_t* last,
                                    wchar_t* result) {
   memmove(result, first, sizeof(wchar_t) * (last - first));
   return result + (last - first);
 }
+
+
+
 
 template <class InputIterator, class Size, class ForwardIterator>
 pair<InputIterator, ForwardIterator>
@@ -115,6 +116,13 @@ uninitialized_copy_n(InputIterator first, Size count,
   return __uninitialized_copy_n(first, count, result,
                                 iterator_category(first));
 }
+
+
+
+
+
+
+
 
 // Valid if copy construction is equivalent to assignment, and if the
 //  destructor is trivial.
