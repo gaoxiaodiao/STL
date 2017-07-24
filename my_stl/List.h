@@ -6,12 +6,20 @@
 */
 #ifndef __LIST_H__
 #define __list_H__
+#include"Iterator.h"
 #include"Alloc.h"
 #include"Construct.h"
 #include"Uninitialized.h"
+
+template<typename T,typename Ptr,typename Ref>
+struct _ListIterator;
+
 template<typename T,typename Alloc=alloc>
 class List{
-	typedef SimpleAlloc<T,Alloc> Allocator;
+	
+public:
+	typedef _ListIterator<T,T*,T&> Iterator;
+	typedef _ListIterator<const T,const T*,const T&> ConstIterator;
 	//list节点定义
 	typedef struct ListNode{
 		T val;
@@ -22,6 +30,7 @@ class List{
 			prev(NULL),
 			next(NULL){}
 	}Node;
+	typedef SimpleAlloc<Node,Alloc> Allocator;
 public:
 	//构造函数
 	List()
@@ -60,34 +69,70 @@ public:
 public:
 	//尾插
 	void PushBack(const T & e){
+		/*
 		Node* newNode = BuyNewNode(e);
 		_tail->next = newNode;
 		newNode->prev = _tail;
-		_tail = newNode;
+		_tail = newNode;*/
+		Insert(End(),e);
 	}
 	//尾删
 	void PopBack(){
 		if(!Empty()){
+			/*
 			Node* tailPrev = _tail->prev;
 			DestroyNode(_tail);
-			_tail = tailPrev;
+			_tail = tailPrev;*/
+			Erase(End());
+		}
+	}
+	//插入节点
+	void Insert(Iterator pos,const T &val){
+		Node *newNode = BuyNewNode(val);
+		newNode->prev = pos.node->prev;
+		newNode->next = pos.node->next;
+		pos.node->next = newNode;
+	}
+	
+	//删除节点
+	void Erase(Iterator pos){
+		Node* delNodePrev = pos.node->prev;
+		Node* delNodeNext = pos.node->next;
+		delNodePrev->next = delNodeNext;
+		delNodeNext->prev = delNodePrev;
+		DestroyNode(pos.node);
+	}
+	void PushFront(const T &val){
+		Insert(Begin(),val);
+	}
+	void PopFront(){
+		if(!Empty()){
+			Erase(_head->next);
 		}
 	}
 	//判断链表是否为空
 	bool Empty(){
 		return _head==_tail;
 	}
+public:
+	Iterator Begin(){
+		return _head;
+	}
+	Iterator End(){
+		//存在隐式转换,再次调用Iterator的构造函数
+		return _tail;
+	}
 protected:
 	//创建新节点
-	T* BuyNewNode(const T& val){
-		Node* tmp = Allocator::allocate(sizeof(T));
+	Node* BuyNewNode(const T& val){
+		Node* tmp = Allocator::Allocate(sizeof(T));
 		Construct(tmp,val);
 		return tmp;
 	}
 	//释放某个节点
 	void DestroyNode(Node* node){
 		Destroy(node);
-		Allocator::deallocate(node);
+		Allocator::Deallocate(node);
 	}
 	//释放整个链表(除头节点以外)
 	void DestroyList(){
@@ -105,5 +150,67 @@ protected:
 private:
 	Node *_head;
 	Node *_tail;
+};
+
+template<typename T,typename Ptr,typename Ref>
+struct _ListIterator{
+	typedef BidirectionalIteratorTag iterator_category;
+	typedef T                          value_type;
+	typedef ptrdiff_t                   difference_type;
+	typedef Ptr                         pointer;
+	typedef Ref                         reference;
+
+	typedef _ListIterator<T,Ptr,Ref> Self;
+
+	typename List<T>::Node *node;
+	_ListIterator(typename List<T>::Node *n)
+		:node(n){}
+
+	Ref operator*(){
+		return node->val;
+	}
+
+	Ptr operator->(){
+		return &operator*();
+	}
+
+	bool operator==(Self s){
+		return node==s.node;
+	}
+	bool operator!=(Self s){
+		return !operator==(s);
+	}
+
+	Self& operator--(){
+		node = node->prev;
+		return *this;
+	}
+	Self& operator-(int n){
+		while(n--){
+			node = node->prev;
+		}
+		return *this;
+	}
+	Self operator--(int){
+		Self ret(node);
+		node = node->prev;
+		return ret;
+	}
+
+	Self& operator++(){
+		node = node->next;
+		return *this;
+	}
+	Self &operator+(int n){
+		while(n--){
+			node = node->next;
+		}
+		return *this;
+	}
+	Self operator++(int){
+		Self ret(node);
+		node = node->next;
+		return ret;
+	}
 };
 #endif
