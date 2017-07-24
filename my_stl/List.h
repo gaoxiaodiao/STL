@@ -25,7 +25,7 @@ public:
 		T val;
 		ListNode *prev;
 		ListNode *next;
-		ListNode(const T &v=T())
+		ListNode(const T & v = T() )
 			:val(v),
 			prev(NULL),
 			next(NULL){}
@@ -74,7 +74,7 @@ public:
 		_tail->next = newNode;
 		newNode->prev = _tail;
 		_tail = newNode;*/
-		Insert(End(),e);
+		Insert(_tail,e);
 	}
 	//尾删
 	void PopBack(){
@@ -83,15 +83,25 @@ public:
 			Node* tailPrev = _tail->prev;
 			DestroyNode(_tail);
 			_tail = tailPrev;*/
-			Erase(End());
+			Erase(_tail);
 		}
 	}
 	//插入节点
 	void Insert(Iterator pos,const T &val){
 		Node *newNode = BuyNewNode(val);
-		newNode->prev = pos.node->prev;
-		newNode->next = pos.node->next;
-		pos.node->next = newNode;
+		Node *prev = pos.node;
+		Node *next = pos.node->next;
+
+		newNode->prev = prev;
+		prev->next = newNode;
+
+		newNode->next = next;
+		next->prev = newNode;
+
+		if(pos.node == _tail){
+			_tail = newNode;
+		}
+
 	}
 	
 	//删除节点
@@ -100,14 +110,17 @@ public:
 		Node* delNodeNext = pos.node->next;
 		delNodePrev->next = delNodeNext;
 		delNodeNext->prev = delNodePrev;
+		if(pos == _tail){
+			_tail = delNodePrev;
+		}
 		DestroyNode(pos.node);
 	}
 	void PushFront(const T &val){
-		Insert(Begin(),val);
+		Insert(End(),val);
 	}
 	void PopFront(){
 		if(!Empty()){
-			Erase(_head->next);
+			Erase(Begin());
 		}
 	}
 	//判断链表是否为空
@@ -116,16 +129,16 @@ public:
 	}
 public:
 	Iterator Begin(){
-		return _head;
+		return _head->next;
 	}
 	Iterator End(){
 		//存在隐式转换,再次调用Iterator的构造函数
-		return _tail;
+		return _head;
 	}
 protected:
 	//创建新节点
 	Node* BuyNewNode(const T& val){
-		Node* tmp = Allocator::Allocate(sizeof(T));
+		Node* tmp = Allocator::Allocate(sizeof(Node));
 		Construct(tmp,val);
 		return tmp;
 	}
