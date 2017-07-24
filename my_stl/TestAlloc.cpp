@@ -5,17 +5,13 @@
 *集成开发环境:Microsoft Visual Studio 2010 
 */
 
-//检测是否存在内存泄漏
-#define CRTDBG_MAP_ALLOC    
-#include <stdlib.h>    
-#include <crtdbg.h>
-
 #include<iostream>
 #include"Uninitialized.h"
 #include"Alloc.h"
 #include<string>
 #include"Vector.h"
 #include<vector>
+#include"List.h"
 using std::vector;
 using std::string;
 using std::cout;
@@ -88,10 +84,55 @@ void TestVector(){
 		cout<<*it2<<" ";
 		++it2;
 	}
-	int* p = new int(0);
+}
+void TestList(){
+	List<int> v;
+	v.PushBack(1);
+	v.PushBack(2);
+	v.PushBack(3);
+	v.PushFront(0);
+	List<int>::Iterator it = v.Begin();
+	while(it != v.End()){
+		cout<<*it<<" ";
+		++it;
+	}
+	cout<<endl;
+	v.PopBack();
+	it = v.Begin();
+	while(it != v.End()){
+		cout<<*it<<" ";
+		++it;
+	}
+	cout<<endl;
+	v.PopFront();
+	it = v.Begin();
+	while(it != v.End()){
+		cout<<*it<<" ";
+		++it;
+	}
+	cout<<endl;
+
+
+	List<string> v2;
+	v2.PushBack("123456789");
+	v2.PushBack("987654321");
+	v2.PushFront("1111111111");
+	List<string>::Iterator it2 = v2.Begin();
+	while(it2 != v2.End()){
+		cout<<*it2<<" ";
+		++it2;
+	}
+	cout<<endl;
+	v2.Erase(v2.Begin()+1);
+	it2 = v2.Begin();
+	while(it2 != v2.End()){
+		cout<<*it2<<" ";
+		++it2;
+	}
 }
 int main(){
-	TestVector();
+	TestList();
+	//TestVector();
 	//TestUninitializedCopy();
 	//TestAlloc();
 	return 0;
