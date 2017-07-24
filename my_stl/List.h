@@ -45,8 +45,10 @@ public:
 		:_head(NULL),
 		_tail(NULL){
 		_head = _tail = BuyNewNode(T());
-		Node *cur = l->next;
-		while(cur!=l->_head){
+		_head->next = _tail;
+		_tail->prev = _head;
+		Node *cur = l._head->next;
+		while(cur!=l._head){
 			PushBack(cur->val);
 			cur = cur->next;
 		}
